@@ -1,0 +1,7 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+	"name": "fastify",
+	"dockerComposeFile": "docker/docker-compose.vscode.yml",
+	"service": "jwt-simple",
+	"workspaceFolder": "/ws/fastify-jwt-simple"
+}

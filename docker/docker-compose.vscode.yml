@@ -1,0 +1,38 @@
+services:
+    jwt-simple:
+        image: vsc-fastify-jwt-simple
+        build: 
+            context: ../
+            dockerfile: docker/jwt-simple/Dockerfile
+            args:
+                - IDIR=fastify-jwt-simple
+                #- BMODE=production # default development on Dockerfile
+            extra_hosts:
+                - "gitea.micso.it:192.168.69.8"
+        volumes:
+            - ../:/ws/fastify-jwt-simple:cached
+            # node_modules in un volume temporaneo che non mi sovraccarica il prj reale in debug
+            - modules:/ws/fastify-jwt-simple/node_modules
+            - pnpm-store:/home/node/pnpm/store
+        extra_hosts:
+            - "gitea.micso.it:192.168.69.8"
+        env_file: ../.env
+        environment:
+            # not in .env because .env can be used in prod too
+            FORCE_UID: 1001
+            FORCE_GID: 1001
+        # Overrides default command so things don't shut down after the process ends.
+        command: sleep infinity
+        deploy:
+            resources:
+                limits:
+                    cpus: 2.0
+
+volumes:
+    modules:
+    pnpm-store:
+
+networks:
+    default:
+        name: docker_default
+        external: true
