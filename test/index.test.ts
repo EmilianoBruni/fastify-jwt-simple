@@ -1,29 +1,29 @@
-import tap from 'tap';
-import { greet, add, subtract } from '../src/index.js';
+import { t } from 'tap';
+import Fastify from 'fastify';
+import plugin from '@/index.js';
 
-// Test for greet function
-tap.test('greet function', t => {
-    t.equal(
-        greet('World'),
-        'Hello, World!',
-        'Should greet the world correctly'
-    );
-    t.equal(greet('Alice'), 'Hello, Alice!', 'Should greet Alice correctly');
-    t.end();
-});
+t.test('Fastify plugin loading', async t => {
+    const fastify = Fastify();
 
-// Test for add function
-tap.test('add function', t => {
-    t.equal(add(2, 3), 5, '2 + 3 should equal 5');
-    t.equal(add(-1, 1), 0, '-1 + 1 should equal 0');
-    t.equal(add(0, 0), 0, '0 + 0 should equal 0');
-    t.end();
-});
+    await fastify.register(plugin, {
+        secret: 'mysecret'
+    });
 
-// Test for subtract function
-tap.test('subtract function', t => {
-    t.equal(subtract(5, 3), 2, '5 - 3 should equal 2');
-    t.equal(subtract(0, 5), -5, '0 - 5 should equal -5');
-    t.equal(subtract(10, 10), 0, '10 - 10 should equal 0');
-    t.end();
+    // exists fastify.jwt from @fastify/jwt
+    t.ok(fastify.jwt, 'fastify.jwt exists');
+
+    fastify.get('/', async (req, rep) => {
+        // check if fastify.jwtBannedToken exists
+        t.ok(req.jwtBannedToken, 'req.jwtBannedToken exists');
+        // check if fastify.jwtBannedRefresh exists
+        t.ok(req.jwtBannedRefresh, 'req.jwtBannedRefresh exists');
+        return { test: true };
+    });
+
+    const response = await fastify.inject('/');
+    t.equal(response.statusCode, 200, 'response status code is 200');
+    const payload = JSON.parse(response.payload);
+    t.equal(payload.test, true, 'response payload is correct');
+
+    await fastify.close();
 });
