@@ -48,15 +48,17 @@ const plugin = async (
 
     // configure cache for banned tokens
     const jwtBannedTokenObj = jwtBannedToken(optionsPostDefaults);
-    app.decorateRequest(
-        'jwtBannedToken',
-        jwtBannedTokenObj
-    );
+    app.decorateRequest('jwtBannedToken', {
+        getter() {
+            return jwtBannedTokenObj;
+        }
+    });
     const jwtBannedRefreshObj = jwtBannedRefresh(optionsPostDefaults);
-    app.decorateRequest(
-        'jwtBannedRefresh',
-        jwtBannedRefreshObj
-    );
+    app.decorateRequest('jwtBannedRefresh', {
+        getter() {
+            return jwtBannedRefreshObj;
+        }
+    });
 
     jwtBannedTokenObj.load();
     jwtBannedRefreshObj.load();
