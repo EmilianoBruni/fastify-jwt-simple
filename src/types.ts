@@ -1,5 +1,13 @@
 import type { FastifyJWTOptions } from '@fastify/jwt';
 import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
+import type { FlatCache } from 'flat-cache';
+
+declare module 'fastify' {
+    interface FastifyRequest {
+        jwtBannedToken: FlatCache;
+        jwtBannedRefresh: FlatCache;
+    }
+}
 
 interface FastifyJWTSimpleInternalOptions {
     cookieConfig?: {
