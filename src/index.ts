@@ -1,13 +1,17 @@
 import {
     FastifyJWTSimpleOptions,
     FastifyJWTSimple,
-    FastifyJWTSimpleOptionsPostDefaults
+    FastifyJWTSimpleOptionsPostDefaults,
+    FastifyJWTSimpleDecorator
 } from '@/types.js';
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyReply } from 'fastify';
 import type { FastifyJWTOptions } from '@fastify/jwt';
 import fastifyJwt from '@fastify/jwt';
 import { FlatCache, FlatCacheEvents } from 'flat-cache';
 import fp from 'fastify-plugin';
+import authorize from '@/lib/authenticate.js';
+
+import pluginCookie from '@fastify/cookie';
 
 const ONE_SECOND_IN_MS = 1000;
 const ONE_MINUTE_IN_MS = 60 * ONE_SECOND_IN_MS;
@@ -27,6 +31,7 @@ const addDefaultOptions = (
     options.userData =
         options.userData ||
         (() => Promise.reject(new Error('userData function not implemented')));
+    options.isToAuthenticate = options.isToAuthenticate || (async () => true);
 
     return options as FastifyJWTSimpleOptionsPostDefaults;
 };
@@ -43,22 +48,32 @@ const plugin = async (
         signed: true
     };
 
+    if (!app.hasPlugin('@fastify/sensible')) {
+        app.register(import('@fastify/sensible'));
+    }
+
+    if (!app.hasPlugin('@fastify/cookie')) {
+        app.register(pluginCookie, {
+            secret: optionsPostDefaults.secret.toString()
+        }).after(() => {
+            app.decorateReply('setSCookie', setSCookie);
+        });
+    } else {
+        app.decorateReply('setSCookie', setSCookie);
+    }
+
     // register  @fastify/jwt plugin
-    app.register(fastifyJwt, options as FastifyJWTOptions);
+    if (!app.hasPlugin('@fastify/jwt')) {
+        app.register(fastifyJwt, options as FastifyJWTOptions);
+    } else {
+        app.log.error(
+            "!!! Don't manually register @fastify/jwt. Disable @fastify/jtw registration and move all options to fastify-jwt-simple !!!"
+        );
+    }
 
     // configure cache for banned tokens
     const jwtBannedTokenObj = jwtBannedToken(optionsPostDefaults);
-    app.decorateRequest('jwtBannedToken', {
-        getter() {
-            return jwtBannedTokenObj;
-        }
-    });
     const jwtBannedRefreshObj = jwtBannedRefresh(optionsPostDefaults);
-    app.decorateRequest('jwtBannedRefresh', {
-        getter() {
-            return jwtBannedRefreshObj;
-        }
-    });
 
     jwtBannedTokenObj.load();
     jwtBannedRefreshObj.load();
@@ -69,11 +84,22 @@ const plugin = async (
     jwtBannedRefreshObj.on(FlatCacheEvents.ERROR, err => {
         app.log.error(err);
     });
+
     app.addHook('onClose', async () => {
         // to allow the process to exit
         jwtBannedTokenObj.stopAutoPersist();
         jwtBannedRefreshObj.stopAutoPersist();
     });
+
+    const decorator: FastifyJWTSimpleDecorator = {
+        jwtBannedToken: jwtBannedTokenObj,
+        jwtBannedRefresh: jwtBannedRefreshObj,
+        isToAuthenticate: optionsPostDefaults.isToAuthenticate,
+        userData: optionsPostDefaults.userData
+    };
+
+    app.decorate('fjs', decorator);
+    app.addHook('onRequest', authorize);
 };
 
 const jwtBannedToken = (options: FastifyJWTSimpleOptionsPostDefaults) =>
@@ -91,6 +117,26 @@ const jwtBannedRefresh = (options: FastifyJWTSimpleOptionsPostDefaults) =>
         persistInterval: 5 * ONE_MINUTE_IN_MS, // 5 minute
         expirationInterval: 10 * ONE_MINUTE_IN_MS // 10 minute
     });
+
+// Set cookie with secure, httpOnly, sameSite, signed and expires
+function setSCookie(
+    this: FastifyReply,
+    cookieName: string,
+    cookieValue: string,
+    expires: Date,
+    path: string = '/'
+) {
+    const hostname = this.request.hostname;
+    return this.setCookie(cookieName, cookieValue, {
+        domain: hostname,
+        path,
+        secure: true, // send cookie over HTTPS only
+        httpOnly: true,
+        sameSite: true, // alternative CSRF protection
+        signed: true,
+        expires: expires
+    });
+}
 
 export default fp(plugin, {
     name: 'fastify-jwt-simple',
