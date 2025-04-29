@@ -35,6 +35,11 @@ interface FastifyJWTSimpleDecorator {
     jwtBannedRefresh: FlatCache;
     userData<T>(request?: FastifyRequest): Promise<T>;
     isToAuthenticate(request?: FastifyRequest): Promise<boolean>;
+    pathToken: string;
+    pathRefreshToken: string;
+    pathLogout: string;
+    expiationToken: number;
+    expiationRefreshToken: number;
 }
 
 interface FastifyJWTSimpleOptions
