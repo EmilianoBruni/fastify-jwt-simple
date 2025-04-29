@@ -7,7 +7,10 @@ export default async (
     req: FastifyRequest,
     rep: FastifyReply
 ): Promise<FastifyError | undefined> => {
-    // if url it's not to authorize, bypass authentication
+    // no authentication for login page
+    if (req.url === req.server.fjs.pathToken) return;
+
+    // if url it's not to authenticate, bypass authentication
     if (!(await req.server.fjs.isToAuthenticate(req))) return;
 
     try {
