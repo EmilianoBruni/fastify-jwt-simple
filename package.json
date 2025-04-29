@@ -63,7 +63,10 @@
     ]
   },
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/error": "^4.1.0",
     "@fastify/jwt": "^9.1.0",
+    "@fastify/sensible": "^6.0.3",
     "fastify-plugin": "^5.0.1",
     "flat-cache": "^6.1.8"
   }
