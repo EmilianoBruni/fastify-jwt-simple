@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "tap -j1 --allow-incomplete-coverage \"test/**/*.test.?(c)[tj]s\"",
-    "buildcjs": "rollup ./dist/index.js --file ./dist/index.cjs --format cjs",
+    "buildcjs": "rollup ./dist/index.js -d ./dist/ --format cjs --compact",
     "build": "pnpm clean && pnpm tsc && pnpm tsc-alias",
     "clean": "rimraf ./dist .tap",
     "lint": "eslint \"src/**/*.[jt]s?(x)\" \"test/**/*.?(c)[jt]s\"",
@@ -54,7 +54,7 @@
       "default": "./dist/index.js",
       "types": "./dist/types/index.d.js"
     },
-    "require": "./dist/index.cjs"
+    "require": "./dist/index-CQKzWzqN.js"
   },
   "tap": {
     "plugin": [
