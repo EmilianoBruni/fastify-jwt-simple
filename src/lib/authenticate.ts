@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply, FastifyError } from 'fastify';
-import createError from '@fastify/error';
 import { FastifyJWTSimplePayload } from '../types.js';
 import { createHash } from 'node:crypto';
+import { FST_JWT_INVALID, FST_JWT_TOKEN_BANNED } from '@/lib/errors.js';
 
 export default async (
     req: FastifyRequest,
@@ -29,17 +29,6 @@ export default async (
 const jwtAuthenticate = async (
     req: FastifyRequest
 ): Promise<FastifyError | undefined> => {
-    const FST_JWT_INVALID = createError(
-        'FST_JWT_INVALID',
-        'Invalid JWT token',
-        401
-    );
-    const FST_JWT_TOKEN_BANNED = createError(
-        'FST_JWT_TOKEN_BANNED',
-        'Token is banned',
-        403
-    );
-
     const jwt = await req.jwtVerify<FastifyJWTSimplePayload>();
     if (jwt) {
         // check if the token is banned

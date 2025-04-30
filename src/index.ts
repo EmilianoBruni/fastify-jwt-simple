@@ -10,6 +10,7 @@ import fastifyJwt from '@fastify/jwt';
 import { FlatCache, FlatCacheEvents } from 'flat-cache';
 import fp from 'fastify-plugin';
 import authorize from '@/lib/authenticate.js';
+import { FST_USER_DATA_NOT_IMPLEMENTED } from '@/lib/errors.js';
 
 import pluginCookie from '@fastify/cookie';
 
@@ -30,7 +31,7 @@ const addDefaultOptions = (
     options.cookieConfig = options.cookieConfig || { name: 'jwtToken' };
     options.userData =
         options.userData ||
-        (() => Promise.reject(new Error('userData function not implemented')));
+        (() => Promise.reject(new FST_USER_DATA_NOT_IMPLEMENTED()));
     options.isToAuthenticate = options.isToAuthenticate || (async () => true);
 
     return options as FastifyJWTSimpleOptionsPostDefaults;
@@ -105,6 +106,11 @@ const plugin = async (
 
     app.decorate('fjs', decorator);
     app.addHook('onRequest', authorize);
+
+    // add routes
+    app.register(import('@/routes/token.js'), {
+        prefix: optionsPostDefaults.pathToken
+    });
 };
 
 const jwtBannedToken = (options: FastifyJWTSimpleOptionsPostDefaults) =>

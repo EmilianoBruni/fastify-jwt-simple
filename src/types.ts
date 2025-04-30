@@ -26,20 +26,30 @@ interface FastifyJWTSimpleInternalOptions {
     pathLogout?: string;
     expiationToken?: number;
     expiationRefreshToken?: number;
-    userData?<T>(request?: FastifyRequest): Promise<T>;
-    isToAuthenticate?(request?: FastifyRequest): Promise<boolean>;
+    userData?<
+        T extends Record<string, string | number | T>,
+        J extends Record<string, string | number | J>
+    >(
+        request: FastifyRequest<{ Body: J }>
+    ): Promise<T>;
+    isToAuthenticate?(request: FastifyRequest): Promise<boolean>;
 }
 
 interface FastifyJWTSimpleDecorator {
     jwtBannedToken: FlatCache;
     jwtBannedRefresh: FlatCache;
-    userData<T>(request?: FastifyRequest): Promise<T>;
-    isToAuthenticate(request?: FastifyRequest): Promise<boolean>;
+    isToAuthenticate(request: FastifyRequest): Promise<boolean>;
     pathToken: string;
     pathRefreshToken: string;
     pathLogout: string;
     expiationToken: number;
     expiationRefreshToken: number;
+    userData<
+        T extends Record<string, string | number | T>,
+        J extends Record<string, string | number | J>
+    >(
+        request: FastifyRequest<{ Body: J }>
+    ): Promise<T>;
 }
 
 interface FastifyJWTSimpleOptions
