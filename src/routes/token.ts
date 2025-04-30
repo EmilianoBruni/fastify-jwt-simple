@@ -14,9 +14,7 @@ type FastifyUserDataReturnType = ReturnType<
     FastifyJWTSimpleDecorator['userData']
 >;
 
-export default async (app: FastifyInstance) =>
-    // app.post('', { schema }, h);
-    app.post('', {}, h);
+export default async (app: FastifyInstance) => app.post('', { schema }, h);
 
 const h = async (req: FastifyRequestWithBody, rep: FastifyReply) => {
     let userData: Awaited<FastifyUserDataReturnType>;
