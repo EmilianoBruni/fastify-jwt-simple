@@ -20,12 +20,18 @@ importers:
       '@fastify/sensible':
         specifier: ^6.0.3
         version: 6.0.3
+      '@sinclair/typebox':
+        specifier: ^0.34.33
+        version: 0.34.33
       fastify-plugin:
         specifier: ^5.0.1
         version: 5.0.1
       flat-cache:
         specifier: ^6.1.8
         version: 6.1.8
+      ts-json-schema-generator:
+        specifier: ^2.4.0
+        version: 2.4.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.25.1
@@ -554,6 +560,9 @@ packages:
     resolution: {integrity: sha512-8iKx79/F73DKbGfRf7+t4dqrc0bRr0thdPrxAtCKWRm/F0tG71i6O1rvlnScncJLLBZHn3h8M3c1BSUAb9yu8g==}
     engines: {node: ^16.14.0 || >=18.0.0}
 
+  '@sinclair/typebox@0.34.33':
+    resolution: {integrity: sha512-5HAV9exOMcXRUxo+9iYB5n09XxzCXnfy4VTNW4xnDv+FgjzAGY989C28BIdljKqmF+ZltUwujE3aossvcVtq6g==}
+
   '@tapjs/after-each@4.0.1':
     resolution: {integrity: sha512-YkVvfszKTLm57Bju8ET4hKCPXVsd9OCkWUBD8h8g0ZrX61r99Cf6jw/D4eTppPcWryOwE7WO/7aj/toBTp2W/Q==}
     engines: {node: 20 || >=22}
@@ -966,6 +975,10 @@ packages:
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  commander@13.1.0:
+    resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
+    engines: {node: '>=18'}
 
   commander@9.5.0:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
@@ -1478,6 +1491,11 @@ packages:
 
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
+
+  json5@2.2.3:
+    resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
+    engines: {node: '>=6'}
+    hasBin: true
 
   jsonparse@1.3.1:
     resolution: {integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==}
@@ -2111,6 +2129,11 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  ts-json-schema-generator@2.4.0:
+    resolution: {integrity: sha512-HbmNsgs58CfdJq0gpteRTxPXG26zumezOs+SB9tgky6MpqiFgQwieCn2MW70+sxpHouZ/w9LW0V6L4ZQO4y1Ug==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
   tsc-alias@1.8.15:
     resolution: {integrity: sha512-yKLVx8ddUurRwhVcS6JFF2ZjksOX2ZWDRIdgt+PQhJBDegIdAdilptiHsuAbx9UFxa16GFrxeKQ2kTcGvR6fkQ==}
     engines: {node: '>=16.20.2'}
@@ -2711,6 +2734,8 @@ snapshots:
       '@sigstore/core': 1.1.0
       '@sigstore/protobuf-specs': 0.3.3
 
+  '@sinclair/typebox@0.34.33': {}
+
   '@tapjs/after-each@4.0.1(@tapjs/core@4.0.1(@types/node@22.15.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
       '@tapjs/core': 4.0.1(@types/node@22.15.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3270,6 +3295,8 @@ snapshots:
 
   color-name@1.1.4: {}
 
+  commander@13.1.0: {}
+
   commander@9.5.0: {}
 
   concat-map@0.0.1: {}
@@ -3808,6 +3835,8 @@ snapshots:
   json-schema-traverse@1.0.0: {}
 
   json-stable-stringify-without-jsonify@1.0.1: {}
+
+  json5@2.2.3: {}
 
   jsonparse@1.3.1: {}
 
@@ -4506,6 +4535,17 @@ snapshots:
 
   ts-api-utils@2.1.0(typescript@5.8.3):
     dependencies:
+      typescript: 5.8.3
+
+  ts-json-schema-generator@2.4.0:
+    dependencies:
+      '@types/json-schema': 7.0.15
+      commander: 13.1.0
+      glob: 11.0.2
+      json5: 2.2.3
+      normalize-path: 3.0.0
+      safe-stable-stringify: 2.5.0
+      tslib: 2.8.1
       typescript: 5.8.3
 
   tsc-alias@1.8.15:
