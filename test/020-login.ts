@@ -19,6 +19,21 @@ t.test('Get tokens without defined useData function', async t => {
     await app.close();
 });
 
+const user = 'test';
+const pass = 'test';
+
+const userData = async <T, J>(request: FastifyRequest<{ Body: J }>) => {
+    const { user, pass } = request.body as {
+        user: string;
+        pass: string;
+    };
+    if (user === 'test' && pass === 'test') {
+        return { id: '123' } as T;
+    } else {
+        throw new Error('Invalid credentials');
+    }
+};
+
 t.test(
     'Get tokens with defined useData function without autorized',
     async () => {
@@ -26,25 +41,19 @@ t.test(
 
         await app.register(plugin, {
             secret: 'mysecret',
-            userData: async <T, J>(request: FastifyRequest<{ Body: J }>) => {
-                const { user, pass } = request.body as {
-                    user: string;
-                    pass: string;
-                };
-                if (user === 'test' && pass === 'test') {
-                    return { id: '123' } as T;
-                } else {
-                    throw new Error('Invalid credentials');
-                }
-            }
+            userData
         });
         const res = await app.inject({
             url: app.fjs.pathToken,
             method: 'POST'
         });
 
-        t.equal(res.statusCode, 401);
-        t.equal(res.statusMessage, 'Unauthorized');
+        t.equal(res.statusCode, 401, 'status code is 401');
+        t.equal(
+            res.statusMessage,
+            'Unauthorized',
+            'status message is Unauthorized'
+        );
         t.equal(
             res.payload,
             '{"statusCode":401,"code":"FST_INVALID_CREDENTIALS","error":"Unauthorized","message":"Invalid credentials"}'
@@ -61,32 +70,49 @@ t.test(
 
         await app.register(plugin, {
             secret: 'mysecret',
-            userData: async <T, J>(request: FastifyRequest<{ Body: J }>) => {
-                const { user, pass } = request.body as {
-                    user: string;
-                    pass: string;
-                };
-                if (user === 'test' && pass === 'test') {
-                    return { id: '123' } as T;
-                } else {
-                    throw new Error('Invalid credentials');
-                }
-            }
+            userData
         });
         const res = await app.inject({
             url: app.fjs.pathToken,
             method: 'POST',
-            payload: { user: 'test', pass: 'test' }
+            payload: { user, pass }
         });
 
-        t.equal(res.statusCode, 200);
-        t.equal(res.statusMessage, 'OK');
+        t.equal(res.statusCode, 200, 'status code is 200');
+        t.equal(res.statusMessage, 'OK', 'status message is OK');
+        // has cookies with name jwtToken and jwtRefreshToken cookies is an array of {name: 'jwtToken', value: 'token'}
+        t.equal(res.cookies.length, 2, 'cookies length is 2');
+        const jwtToken = res.cookies.find(cookie => cookie.name === 'jwtToken');
+        const jwtRefreshToken = res.cookies.find(
+            cookie => cookie.name === 'jwtRefreshToken'
+        );
+
+        t.ok(jwtToken, 'jwtToken cookie is set');
+        t.ok(jwtRefreshToken, 'jwtRefreshToken cookie is set');
+
         // hash token and refreshToken attributes in payload
         const payload = JSON.parse(res.payload);
         t.hasProps(
             payload,
             ['token', 'refreshToken'],
             'payload has token and refreshToken attributes'
+        );
+
+        // payload.token and jwtToken are equal except for the last .characters
+        const token = payload.token;
+        const jwtTokenParts = jwtToken?.value.split('.').slice(0, 3).join('.');
+        t.equal(token, jwtTokenParts, 'token and jwtToken are equal');
+
+        // payload.refreshToken and jwtRefreshToken are equal except for the last .characters
+        const refreshToken = payload.refreshToken;
+        const jwtRefreshTokenParts = jwtRefreshToken?.value
+            .split('.')
+            .slice(0, 3)
+            .join('.');
+        t.equal(
+            refreshToken,
+            jwtRefreshTokenParts,
+            'refreshToken and jwtRefreshToken are equal'
         );
 
         await app.close();
