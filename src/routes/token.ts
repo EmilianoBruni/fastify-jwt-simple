@@ -22,11 +22,12 @@ const h = async (req: FastifyRequestWithBody, rep: FastifyReply) => {
     try {
         userData = await req.server.fjs.userData(req);
     } catch (error) {
-        if (error instanceof FST_USER_DATA_NOT_IMPLEMENTED)
-            return FST_USER_DATA_NOT_IMPLEMENTED();
+        if (error instanceof FST_USER_DATA_NOT_IMPLEMENTED) {
+            return error;
+        }
 
         // TODO: customize with raised error
-        return FST_INVALID_CREDENTIALS();
+        return new FST_INVALID_CREDENTIALS();
     }
 
     if (!userData) {
