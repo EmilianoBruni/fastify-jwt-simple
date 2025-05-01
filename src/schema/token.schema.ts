@@ -2,7 +2,7 @@
 
 import { Type } from '@sinclair/typebox';
 import { FastifyJWTSimpleDecorator } from '@/types.js';
-import { FastifyRequest } from 'fastify';
+import { FastifyRequest, FastifyError } from 'fastify';
 
 // import tsj from 'ts-json-schema-generator';
 
@@ -22,7 +22,16 @@ export default {
             refreshToken: Type.String()
         }),
         401: Type.Object({
-            error: Type.String()
+            statusCode: Type.Number(),
+            code: Type.String(),
+            error: Type.String(),
+            message: Type.String()
+        }),
+        501: Type.Object({
+            statusCode: Type.Number(),
+            code: Type.String(),
+            error: Type.String(),
+            message: Type.String()
         })
     }
 };
