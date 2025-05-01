@@ -115,6 +115,30 @@ t.test(
             'refreshToken and jwtRefreshToken are equal'
         );
 
+        // decode token and check if the payload is equal to { id: '123' }
+        const decodedToken = JSON.parse(
+            Buffer.from(token.split('.')[1], 'base64').toString()
+        );
+        t.equal(decodedToken.id, '123', 'decoded token id is 123');
+        // check if the token has not isRefresh property
+        t.notOk(decodedToken.isRefresh, 'decoded token isRefresh is false');
+
+        // decode refreshToken and check if the payload is equal to { id: '123' }
+        const decodedRefreshToken = JSON.parse(
+            Buffer.from(refreshToken.split('.')[1], 'base64').toString()
+        );
+        t.equal(
+            decodedRefreshToken.id,
+            '123',
+            'decoded refreshToken id is 123'
+        );
+        // check if the refreshToken has isRefresh property and isRefresh is true
+        t.equal(
+            decodedRefreshToken.isRefresh,
+            true,
+            'decoded refreshToken isRefresh is true'
+        );
+
         await app.close();
     }
 );
