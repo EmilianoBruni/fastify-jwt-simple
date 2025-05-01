@@ -11,16 +11,18 @@ t.test('Get tokens without defined useData function', async t => {
     const res = await app.inject({ url: app.fjs.pathToken, method: 'POST' });
     t.equal(res.statusCode, 501);
     t.equal(res.statusMessage, 'Not Implemented');
-    t.equal(
-        res.payload,
-        '{"statusCode":501,"code":"FST_USER_DATA_NOT_IMPLEMENTED","error":"Not Implemented","message":"userData function not implemented"}'
-    );
+    t.has(JSON.parse(res.payload), {
+        statusCode: 501,
+        code: 'FST_USER_DATA_NOT_IMPLEMENTED',
+        error: 'Not Implemented',
+        message: 'userData function not implemented'
+    });
 
     await app.close();
 });
 
-const user = 'test';
-const pass = 'test';
+const userBody = 'test';
+const passBody = 'test';
 const ret = { id: '123' };
 
 const userData = async <T, J>(request: FastifyRequest<{ Body: J }>) => {
@@ -28,7 +30,8 @@ const userData = async <T, J>(request: FastifyRequest<{ Body: J }>) => {
         user: string;
         pass: string;
     };
-    if (user === user && pass === pass) {
+
+    if (user === userBody && pass === passBody) {
         return ret as T;
     } else {
         throw new Error('Invalid credentials');
@@ -55,9 +58,15 @@ t.test(
             'Unauthorized',
             'status message is Unauthorized'
         );
-        t.equal(
-            res.payload,
-            '{"statusCode":401,"code":"FST_INVALID_CREDENTIALS","error":"Unauthorized","message":"Invalid credentials"}'
+        t.has(
+            JSON.parse(res.payload),
+            {
+                statusCode: 401,
+                code: 'FST_INVALID_CREDENTIALS',
+                error: 'Unauthorized',
+                message: 'Invalid credentials'
+            },
+            'payload is correct error message'
         );
 
         await app.close();
@@ -76,7 +85,7 @@ t.test(
         const res = await app.inject({
             url: app.fjs.pathToken,
             method: 'POST',
-            payload: { user, pass }
+            payload: { user: userBody, pass: passBody }
         });
 
         t.equal(res.statusCode, 200, 'status code is 200');
