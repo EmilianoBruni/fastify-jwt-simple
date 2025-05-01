@@ -2,7 +2,7 @@
 
 import { Type } from '@sinclair/typebox';
 import { FastifyJWTSimpleDecorator } from '@/types.js';
-import { FastifyRequest, FastifyError } from 'fastify';
+import { FastifyRequest } from 'fastify';
 
 // import tsj from 'ts-json-schema-generator';
 
