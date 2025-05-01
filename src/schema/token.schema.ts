@@ -4,8 +4,6 @@ import { Type } from '@sinclair/typebox';
 import { FastifyJWTSimpleDecorator } from '@/types.js';
 import { FastifyRequest } from 'fastify';
 
-// import tsj from 'ts-json-schema-generator';
-
 // Extract the Body type from FastifyRequest
 type ExtractBody<T> = T extends FastifyRequest<{ Body: infer J }> ? J : never;
 
