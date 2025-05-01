@@ -21,14 +21,15 @@ t.test('Get tokens without defined useData function', async t => {
 
 const user = 'test';
 const pass = 'test';
+const ret = { id: '123' };
 
 const userData = async <T, J>(request: FastifyRequest<{ Body: J }>) => {
     const { user, pass } = request.body as {
         user: string;
         pass: string;
     };
-    if (user === 'test' && pass === 'test') {
-        return { id: '123' } as T;
+    if (user === user && pass === pass) {
+        return ret as T;
     } else {
         throw new Error('Invalid credentials');
     }
@@ -129,7 +130,7 @@ t.test(
         );
         t.equal(
             decodedRefreshToken.id,
-            '123',
+            ret.id,
             'decoded refreshToken id is 123'
         );
         // check if the refreshToken has isRefresh property and isRefresh is true
