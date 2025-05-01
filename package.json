@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "tap -j4 --allow-incomplete-coverage \"test/**/*.test.?(c)[tj]s\"",
+    "test:coverage": "tap -j4 --show-full-coverage \"test/**/*.test.?(c)[tj]s\"",
     "buildcjs": "rollup ./dist/index.js -d ./dist/ --format cjs --compact",
     "build": "pnpm clean && pnpm tsc && pnpm tsc-alias",
     "clean": "rimraf ./dist .tap",
