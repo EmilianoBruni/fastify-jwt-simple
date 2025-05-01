@@ -69,7 +69,6 @@
     "@fastify/sensible": "^6.0.3",
     "@sinclair/typebox": "^0.34.33",
     "fastify-plugin": "^5.0.1",
-    "flat-cache": "^6.1.8",
-    "ts-json-schema-generator": "^2.4.0"
+    "flat-cache": "^6.1.8"
   }
 }
