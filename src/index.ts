@@ -12,6 +12,10 @@ import fp from 'fastify-plugin';
 import authorize from '@/lib/authenticate.js';
 import { FST_USER_DATA_NOT_IMPLEMENTED } from '@/lib/errors.js';
 
+import routeToken from '@/routes/token.js';
+import routeRefresh from '@/routes/refresh.js';
+import routeLogout from '@/routes/logout.js';
+
 import pluginCookie from '@fastify/cookie';
 
 const ONE_SECOND_IN_MS = 1000;
@@ -107,13 +111,13 @@ const plugin = async (
     app.addHook('onRequest', authorize);
 
     // add routes
-    app.register(import('@/routes/token.js'), {
+    app.register(routeToken, {
         prefix: optionsPostDefaults.pathToken
     });
-    app.register(import('@/routes/refresh.js'), {
+    app.register(routeRefresh, {
         prefix: optionsPostDefaults.pathRefreshToken
     });
-    app.register(import('@/routes/logout.js'), {
+    app.register(routeLogout, {
         prefix: optionsPostDefaults.pathLogout
     });
 };
