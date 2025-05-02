@@ -22,3 +22,27 @@ export const FST_JWT_TOKEN_BANNED = createError(
     'Token is banned',
     403
 );
+
+export const FST_JWT_REFRESH_NOT_FOUND = createError(
+    'FST_JWT_REFRESH_NOT_FOUND',
+    'No refresh token found',
+    401
+);
+
+export const FST_JWT_REFRESH_INVALID = createError(
+    'FST_JWT_REFRESH_INVALID',
+    'Invalid refresh token',
+    401
+);
+
+export const FST_JWT_NOT_A_REFRESH = createError(
+    'FST_JWT_NOT_A_REFRESH',
+    'Not a refresh token (missing isRefresh:true)',
+    401
+);
+
+export const FST_JWT_REFRESH_BANNED = createError(
+    'FST_JWT_REFRESH_BANNED',
+    'Refresh token is banned',
+    403
+);

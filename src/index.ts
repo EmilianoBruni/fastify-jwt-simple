@@ -22,8 +22,7 @@ const addDefaultOptions = (
 ): FastifyJWTSimpleOptionsPostDefaults => {
     // add default options
     options.pathToken = options.pathToken || '/auth/token';
-    options.pathRefreshToken =
-        options.pathRefreshToken || '/auth/refresh-token';
+    options.pathRefreshToken = options.pathRefreshToken || '/auth/refresh';
     options.pathLogout = options.pathLogout || '/auth/logout';
     options.expirationToken = options.expirationToken || 60 * 20; // 20 minutes
     options.expirationRefreshToken =
@@ -110,6 +109,9 @@ const plugin = async (
     // add routes
     app.register(import('@/routes/token.js'), {
         prefix: optionsPostDefaults.pathToken
+    });
+    app.register(import('@/routes/refresh.js'), {
+        prefix: optionsPostDefaults.pathRefreshToken
     });
 };
 
