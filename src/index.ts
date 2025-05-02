@@ -113,6 +113,9 @@ const plugin = async (
     app.register(import('@/routes/refresh.js'), {
         prefix: optionsPostDefaults.pathRefreshToken
     });
+    app.register(import('@/routes/logout.js'), {
+        prefix: optionsPostDefaults.pathLogout
+    });
 };
 
 const jwtBannedToken = (options: FastifyJWTSimpleOptionsPostDefaults) =>
