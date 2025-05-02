@@ -88,6 +88,8 @@ t.test(
             payload: { user: userBody, pass: passBody }
         });
 
+        const currentDateMs = Date.now();
+
         t.equal(res.statusCode, 200, 'status code is 200');
         t.equal(res.statusMessage, 'OK', 'status message is OK');
         // has cookies with name jwtToken and jwtRefreshToken cookies is an array of {name: 'jwtToken', value: 'token'}
@@ -147,6 +149,61 @@ t.test(
             decodedRefreshToken.isRefresh,
             true,
             'decoded refreshToken isRefresh is true'
+        );
+
+        // check if the accessToken and refreshToken have expiration date
+        const accessTokenExp = decodedToken.exp;
+        const refreshTokenExp = decodedRefreshToken.exp;
+        t.ok(accessTokenExp, 'accessToken has expiration date');
+        t.ok(refreshTokenExp, 'refreshToken has expiration date');
+
+        console.log('accessTokenExp', accessTokenExp);
+        console.log('refreshTokenExp', refreshTokenExp);
+
+        // check if the expiration date is a number
+        t.equal(typeof accessTokenExp, 'number', 'accessToken exp is a number');
+        t.equal(
+            typeof refreshTokenExp,
+            'number',
+            'refreshToken exp is a number'
+        );
+
+        // check if expiration date in near current date + app.fjs.accessTokenExp
+        const accessTokenExpDate = new Date(accessTokenExp * 1000);
+        const refreshTokenExpDate = new Date(refreshTokenExp * 1000);
+
+        const accessTokenExpDiffMs =
+            accessTokenExpDate.getTime() - currentDateMs;
+        const refreshTokenExpDiffMs =
+            refreshTokenExpDate.getTime() - currentDateMs;
+
+        const deltaAccessTokenMs = Math.abs(
+            accessTokenExpDiffMs - app.fjs.expiationToken * 1000
+        );
+        const deltaRefreshTokenMs = Math.abs(
+            refreshTokenExpDiffMs - app.fjs.expiationRefreshToken * 1000
+        );
+
+        // check if the expiration date is near current date + app.fjs.accessTokenExp
+        t.ok(
+            deltaAccessTokenMs < 2000,
+            'accessToken expiration date is near current date + app.fjs.accessTokenExp'
+        );
+        t.ok(
+            deltaRefreshTokenMs < 2000,
+            'refreshToken expiration date is near current date + app.fjs.refreshTokenExp'
+        );
+
+        t.same(
+            jwtToken?.expires,
+            accessTokenExpDate,
+            'jwtToken expires is equal to accessToken expiration date'
+        );
+
+        t.same(
+            jwtRefreshToken?.expires,
+            refreshTokenExpDate,
+            'jwtRefreshToken expires is equal to refreshToken expiration date'
         );
 
         await app.close();
