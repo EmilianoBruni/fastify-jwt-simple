@@ -175,10 +175,10 @@ t.test(
             refreshTokenExpDate.getTime() - currentDateMs;
 
         const deltaAccessTokenMs = Math.abs(
-            accessTokenExpDiffMs - app.fjs.expiationToken * 1000
+            accessTokenExpDiffMs - app.fjs.expirationToken * 1000
         );
         const deltaRefreshTokenMs = Math.abs(
-            refreshTokenExpDiffMs - app.fjs.expiationRefreshToken * 1000
+            refreshTokenExpDiffMs - app.fjs.expirationRefreshToken * 1000
         );
 
         // check if the expiration date is near current date + app.fjs.accessTokenExp
