@@ -24,8 +24,8 @@ interface FastifyJWTSimpleInternalOptions {
     pathToken?: string;
     pathRefreshToken?: string;
     pathLogout?: string;
-    expiationToken?: number;
-    expiationRefreshToken?: number;
+    expirationToken?: number;
+    expirationRefreshToken?: number;
     userData?<
         T extends Record<string, string | number | T>,
         J extends Record<string, string | number | J>
@@ -42,8 +42,8 @@ interface FastifyJWTSimpleDecorator {
     pathToken: string;
     pathRefreshToken: string;
     pathLogout: string;
-    expiationToken: number;
-    expiationRefreshToken: number;
+    expirationToken: number;
+    expirationRefreshToken: number;
     userData<
         T extends Record<string, string | number | T>,
         J extends Record<string, string | number | J>
