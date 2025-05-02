@@ -36,24 +36,24 @@ const h = async (req: FastifyRequestWithBody, rep: FastifyReply) => {
 
     const token = req.server.jwt.sign(
         { ...userData },
-        { expiresIn: `${req.server.fjs.expiationToken}s` }
+        { expiresIn: `${req.server.fjs.expirationToken}s` }
     );
     const refreshToken = req.server.jwt.sign(
         { ...userData, isRefresh: true },
-        { expiresIn: `${req.server.fjs.expiationRefreshToken}s` }
+        { expiresIn: `${req.server.fjs.expirationRefreshToken}s` }
     );
 
     // Set cookie for access token
     rep.setSCookie(
         'jwtToken',
         token,
-        new Date(Date.now() + req.server.fjs.expiationToken * 1000)
+        new Date(Date.now() + req.server.fjs.expirationToken * 1000)
     )
         // Set cookie for refresh token
         .setSCookie(
             'jwtRefreshToken',
             refreshToken,
-            new Date(Date.now() + req.server.fjs.expiationRefreshToken * 1000),
+            new Date(Date.now() + req.server.fjs.expirationRefreshToken * 1000),
             '/auth'
         )
         .code(200)
