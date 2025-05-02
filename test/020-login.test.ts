@@ -157,9 +157,6 @@ t.test(
         t.ok(accessTokenExp, 'accessToken has expiration date');
         t.ok(refreshTokenExp, 'refreshToken has expiration date');
 
-        console.log('accessTokenExp', accessTokenExp);
-        console.log('refreshTokenExp', refreshTokenExp);
-
         // check if the expiration date is a number
         t.equal(typeof accessTokenExp, 'number', 'accessToken exp is a number');
         t.equal(
