@@ -34,10 +34,13 @@ const h = async (req: FastifyRequestWithBody, rep: FastifyReply) => {
         return new FST_INVALID_CREDENTIALS();
     }
 
-    const token = req.server.jwt.sign({ ...userData }, { expiresIn: '10m' });
+    const token = req.server.jwt.sign(
+        { ...userData },
+        { expiresIn: `${req.server.fjs.expiationToken}s` }
+    );
     const refreshToken = req.server.jwt.sign(
         { ...userData, isRefresh: true },
-        { expiresIn: '1d' }
+        { expiresIn: `${req.server.fjs.expiationRefreshToken}s` }
     );
 
     // Set cookie for access token
