@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { createHash } from 'node:crypto';
 import type { FastifyJWTSimpleDecorator } from '@/types.js';
+import schema from '@/schema/refresh.schema.js';
 
 import {
     FST_JWT_REFRESH_NOT_FOUND,
@@ -9,8 +10,7 @@ import {
     FST_JWT_REFRESH_BANNED
 } from '@/lib/errors.js';
 
-// export default async (app: FastifyInstance) => app.get('', { schema }, h);
-export default async (app: FastifyInstance) => app.get('', {}, h);
+export default async (app: FastifyInstance) => app.get('', { schema }, h);
 
 type FastifyUserDataReturnType = ReturnType<
     FastifyJWTSimpleDecorator['userData']
