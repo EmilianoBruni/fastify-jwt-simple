@@ -46,3 +46,9 @@ export const FST_JWT_REFRESH_BANNED = createError(
     'Refresh token is banned',
     403
 );
+
+export const FST_JWT_NOT_LOGGED_IN = createError(
+    'FST_JWT_NOT_LOGGED_IN',
+    'Not logged in',
+    401
+);
