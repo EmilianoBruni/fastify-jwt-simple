@@ -25,9 +25,9 @@ const addDefaultOptions = (
     options.pathRefreshToken =
         options.pathRefreshToken || '/auth/refresh-token';
     options.pathLogout = options.pathLogout || '/auth/logout';
-    options.expiationToken = options.expiationToken || 60 * 20; // 20 minutes
-    options.expiationRefreshToken =
-        options.expiationRefreshToken || 60 * 60 * 24 * 7; // 7 days
+    options.expirationToken = options.expirationToken || 60 * 20; // 20 minutes
+    options.expirationRefreshToken =
+        options.expirationRefreshToken || 60 * 60 * 24 * 7; // 7 days
     options.cookieConfig = options.cookieConfig || { name: 'jwtToken' };
     options.userData =
         options.userData ||
@@ -100,8 +100,8 @@ const plugin = async (
         pathToken: optionsPostDefaults.pathToken,
         pathRefreshToken: optionsPostDefaults.pathRefreshToken,
         pathLogout: optionsPostDefaults.pathLogout,
-        expiationToken: optionsPostDefaults.expiationToken,
-        expiationRefreshToken: optionsPostDefaults.expiationRefreshToken
+        expirationToken: optionsPostDefaults.expirationToken,
+        expirationRefreshToken: optionsPostDefaults.expirationRefreshToken
     };
 
     app.decorate('fjs', decorator);
@@ -116,7 +116,7 @@ const plugin = async (
 const jwtBannedToken = (options: FastifyJWTSimpleOptionsPostDefaults) =>
     new FlatCache({
         cacheId: 'jwt-banned-token',
-        ttl: options.expiationToken * ONE_SECOND_IN_MS,
+        ttl: options.expirationToken * ONE_SECOND_IN_MS,
         persistInterval: 5 * ONE_MINUTE_IN_MS, // save to disk every..
         expirationInterval: ONE_MINUTE_IN_MS // checktime for expired keys
     });
@@ -124,7 +124,7 @@ const jwtBannedToken = (options: FastifyJWTSimpleOptionsPostDefaults) =>
 const jwtBannedRefresh = (options: FastifyJWTSimpleOptionsPostDefaults) =>
     new FlatCache({
         cacheId: 'jwt-banned-refresh',
-        ttl: options.expiationRefreshToken * ONE_SECOND_IN_MS,
+        ttl: options.expirationRefreshToken * ONE_SECOND_IN_MS,
         persistInterval: 5 * ONE_MINUTE_IN_MS, // 5 minute
         expirationInterval: 10 * ONE_MINUTE_IN_MS // 10 minute
     });
