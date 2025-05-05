@@ -25,17 +25,19 @@ const addDefaultOptions = (
     options: FastifyJWTSimpleOptions
 ): FastifyJWTSimpleOptionsPostDefaults => {
     // add default options
-    options.pathToken = options.pathToken || '/auth/token';
-    options.pathRefreshToken = options.pathRefreshToken || '/auth/refresh';
-    options.pathLogout = options.pathLogout || '/auth/logout';
-    options.expirationToken = options.expirationToken || 60 * 20; // 20 minutes
-    options.expirationRefreshToken =
-        options.expirationRefreshToken || 60 * 60 * 24 * 7; // 7 days
+    options.path = options.path || {};
+    options.path.token = options.path.token || '/auth/token';
+    options.path.refreshToken = options.path.refreshToken || '/auth/refresh';
+    options.path.logout = options.path.logout || '/auth/logout';
+    options.expiration = options.expiration || {};
+    options.expiration.token = options.expiration.token || 60 * 20; // 20 minutes
+    options.expiration.refreshToken =
+        options.expiration.refreshToken || 60 * 60 * 24 * 7; // 7 days
     options.cookieConfig = options.cookieConfig || { name: 'jwtToken' };
-    options.userData =
-        options.userData ||
+    options.authUser =
+        options.authUser ||
         (() => Promise.reject(new FST_USER_DATA_NOT_IMPLEMENTED()));
-    options.isToAuthenticate = options.isToAuthenticate || (async () => true);
+    options.isRestricted = options.isRestricted || (async () => true);
 
     return options as FastifyJWTSimpleOptionsPostDefaults;
 };
@@ -98,13 +100,10 @@ const plugin: FastifyJWTSimple = async (
     const decorator: FastifyJWTSimpleDecorator = {
         jwtBannedToken: jwtBannedTokenObj,
         jwtBannedRefresh: jwtBannedRefreshObj,
-        isToAuthenticate: optionsPostDefaults.isToAuthenticate,
-        userData: optionsPostDefaults.userData,
-        pathToken: optionsPostDefaults.pathToken,
-        pathRefreshToken: optionsPostDefaults.pathRefreshToken,
-        pathLogout: optionsPostDefaults.pathLogout,
-        expirationToken: optionsPostDefaults.expirationToken,
-        expirationRefreshToken: optionsPostDefaults.expirationRefreshToken
+        isRestricted: optionsPostDefaults.isRestricted,
+        authUser: optionsPostDefaults.authUser,
+        path: optionsPostDefaults.path,
+        expiration: optionsPostDefaults.expiration
     };
 
     app.decorate('fjs', decorator);
@@ -112,20 +111,20 @@ const plugin: FastifyJWTSimple = async (
 
     // add routes
     app.register(routeToken, {
-        prefix: optionsPostDefaults.pathToken
+        prefix: optionsPostDefaults.path.token
     });
     app.register(routeRefresh, {
-        prefix: optionsPostDefaults.pathRefreshToken
+        prefix: optionsPostDefaults.path.refreshToken
     });
     app.register(routeLogout, {
-        prefix: optionsPostDefaults.pathLogout
+        prefix: optionsPostDefaults.path.logout
     });
 };
 
 const jwtBannedToken = (options: FastifyJWTSimpleOptionsPostDefaults) =>
     new FlatCache({
         cacheId: 'jwt-banned-token',
-        ttl: options.expirationToken * ONE_SECOND_IN_MS,
+        ttl: options.expiration.token * ONE_SECOND_IN_MS,
         persistInterval: 5 * ONE_MINUTE_IN_MS, // save to disk every..
         expirationInterval: ONE_MINUTE_IN_MS // checktime for expired keys
     });
@@ -133,7 +132,7 @@ const jwtBannedToken = (options: FastifyJWTSimpleOptionsPostDefaults) =>
 const jwtBannedRefresh = (options: FastifyJWTSimpleOptionsPostDefaults) =>
     new FlatCache({
         cacheId: 'jwt-banned-refresh',
-        ttl: options.expirationRefreshToken * ONE_SECOND_IN_MS,
+        ttl: options.expiration.refreshToken * ONE_SECOND_IN_MS,
         persistInterval: 5 * ONE_MINUTE_IN_MS, // 5 minute
         expirationInterval: 10 * ONE_MINUTE_IN_MS // 10 minute
     });

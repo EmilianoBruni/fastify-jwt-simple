@@ -8,10 +8,10 @@ export default async (
     rep: FastifyReply
 ): Promise<FastifyError | undefined> => {
     // no authentication for login page
-    if (req.url === req.server.fjs.pathToken) return;
+    if (req.url === req.server.fjs.path.token) return;
 
     // if url it's not to authenticate, bypass authentication
-    if (!(await req.server.fjs.isToAuthenticate(req))) return;
+    if (!(await req.server.fjs.isRestricted(req))) return;
 
     try {
         const jwtAuth = await jwtAuthenticate(req);

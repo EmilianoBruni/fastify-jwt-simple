@@ -13,7 +13,7 @@ import {
 export default async (app: FastifyInstance) => app.get('', { schema }, h);
 
 type FastifyUserDataReturnType = ReturnType<
-    FastifyJWTSimpleDecorator['userData']
+    FastifyJWTSimpleDecorator['authUser']
 >;
 interface JWTPayloadData extends FastifyUserDataReturnType {
     isRefresh?: boolean;
@@ -50,14 +50,14 @@ const h = async (req: FastifyRequest, rep: FastifyReply) => {
     // generate new access token
     delete oldToken.isRefresh;
     const token = req.server.jwt.sign(oldToken, {
-        expiresIn: `${req.server.fjs.expirationToken}s`
+        expiresIn: `${req.server.fjs.expiration.token}s`
     });
     // send new access token
 
     rep.setSCookie(
         'jwtToken',
         token,
-        new Date(Date.now() + req.server.fjs.expirationToken * 1000)
+        new Date(Date.now() + req.server.fjs.expiration.token * 1000)
     )
         .code(200)
         .send({ token });

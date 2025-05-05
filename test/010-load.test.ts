@@ -14,15 +14,15 @@ t.test('Fastify plugin loading', async t => {
     t.ok(app.fjs, 'app.fjs exists');
     t.ok(app.fjs.jwtBannedToken, 'app.fjs.jwtBannedToken exists');
     t.ok(app.fjs.jwtBannedRefresh, 'app.fjs.jwtBannedRefresh exists');
-    t.ok(app.fjs.isToAuthenticate, 'app.fjs.isToAuthenticate exists');
-    t.ok(app.fjs.userData, 'app.fjs.userData exists');
+    t.ok(app.fjs.isRestricted, 'app.fjs.isToAuthenticate exists');
+    t.ok(app.fjs.authUser, 'app.fjs.userData exists');
     t.equal(
-        typeof app.fjs.isToAuthenticate,
+        typeof app.fjs.isRestricted,
         'function',
         'app.fjs.isToAuthenticate is a function'
     );
     t.equal(
-        typeof app.fjs.userData,
+        typeof app.fjs.authUser,
         'function',
         'app.fjs.userData is a function'
     );
@@ -60,7 +60,7 @@ t.test('isAuthenticate function', async t => {
     t.equal(payload.error, 'Forbidden', 'response payload is correct');
 
     // test isToAuthenticate to bypass authentication
-    app.fjs.isToAuthenticate = async () => {
+    app.fjs.isRestricted = async () => {
         return false;
     };
 

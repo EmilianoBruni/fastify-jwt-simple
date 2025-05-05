@@ -8,7 +8,7 @@ t.test('Get tokens without defined useData function', async t => {
     await app.register(plugin, {
         secret: 'mysecret'
     });
-    const res = await app.inject({ url: app.fjs.pathToken, method: 'POST' });
+    const res = await app.inject({ url: app.fjs.path.token, method: 'POST' });
     t.equal(res.statusCode, 501);
     t.equal(res.statusMessage, 'Not Implemented');
     t.has(JSON.parse(res.payload), {
@@ -45,10 +45,10 @@ t.test(
 
         await app.register(plugin, {
             secret: 'mysecret',
-            userData
+            authUser: userData
         });
         const res = await app.inject({
-            url: app.fjs.pathToken,
+            url: app.fjs.path.token,
             method: 'POST'
         });
 
@@ -80,10 +80,10 @@ t.test(
 
         await app.register(plugin, {
             secret: 'mysecret',
-            userData
+            authUser: userData
         });
         const res = await app.inject({
-            url: app.fjs.pathToken,
+            url: app.fjs.path.token,
             method: 'POST',
             payload: { user: userBody, pass: passBody }
         });
@@ -175,10 +175,10 @@ t.test(
             refreshTokenExpDate.getTime() - currentDateMs;
 
         const deltaAccessTokenMs = Math.abs(
-            accessTokenExpDiffMs - app.fjs.expirationToken * 1000
+            accessTokenExpDiffMs - app.fjs.expiration.token * 1000
         );
         const deltaRefreshTokenMs = Math.abs(
-            refreshTokenExpDiffMs - app.fjs.expirationRefreshToken * 1000
+            refreshTokenExpDiffMs - app.fjs.expiration.refreshToken * 1000
         );
 
         // check if the expiration date is near current date + app.fjs.accessTokenExp

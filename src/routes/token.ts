@@ -8,10 +8,10 @@ import {
 } from '@/lib/errors.js';
 
 type FastifyRequestWithBody = Parameters<
-    FastifyJWTSimpleDecorator['userData']
+    FastifyJWTSimpleDecorator['authUser']
 >[0];
 type FastifyUserDataReturnType = ReturnType<
-    FastifyJWTSimpleDecorator['userData']
+    FastifyJWTSimpleDecorator['authUser']
 >;
 
 export default async (app: FastifyInstance) => app.post('', { schema }, h);
@@ -20,7 +20,7 @@ const h = async (req: FastifyRequestWithBody, rep: FastifyReply) => {
     let userData: Awaited<FastifyUserDataReturnType>;
 
     try {
-        userData = await req.server.fjs.userData(req);
+        userData = await req.server.fjs.authUser(req);
     } catch (error) {
         if (error instanceof FST_USER_DATA_NOT_IMPLEMENTED) {
             return error;
@@ -36,24 +36,26 @@ const h = async (req: FastifyRequestWithBody, rep: FastifyReply) => {
 
     const token = req.server.jwt.sign(
         { ...userData },
-        { expiresIn: `${req.server.fjs.expirationToken}s` }
+        { expiresIn: `${req.server.fjs.expiration.token}s` }
     );
     const refreshToken = req.server.jwt.sign(
         { ...userData, isRefresh: true },
-        { expiresIn: `${req.server.fjs.expirationRefreshToken}s` }
+        { expiresIn: `${req.server.fjs.expiration.refreshToken}s` }
     );
 
     // Set cookie for access token
     rep.setSCookie(
         'jwtToken',
         token,
-        new Date(Date.now() + req.server.fjs.expirationToken * 1000)
+        new Date(Date.now() + req.server.fjs.expiration.token * 1000)
     )
         // Set cookie for refresh token
         .setSCookie(
             'jwtRefreshToken',
             refreshToken,
-            new Date(Date.now() + req.server.fjs.expirationRefreshToken * 1000),
+            new Date(
+                Date.now() + req.server.fjs.expiration.refreshToken * 1000
+            ),
             '/auth'
         )
         .code(200)

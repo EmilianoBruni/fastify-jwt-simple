@@ -16,35 +16,40 @@ declare module 'fastify' {
     }
 }
 
+type Paths = {
+    token?: string;
+    refreshToken?: string;
+    logout?: string;
+};
+
+type Expirations = {
+    token?: number;
+    refreshToken?: number;
+};
+
 interface FastifyJWTSimpleInternalOptions {
     cookieConfig?: {
         name: string;
         domain?: string;
     };
-    pathToken?: string;
-    pathRefreshToken?: string;
-    pathLogout?: string;
-    expirationToken?: number;
-    expirationRefreshToken?: number;
-    userData?<
+    path?: Paths;
+    expiration?: Expirations;
+    authUser?<
         T extends Record<string, string | number | T>,
         J extends Record<string, string | number | J>
     >(
         request: FastifyRequest<{ Body: J }>
     ): Promise<T>;
-    isToAuthenticate?(request: FastifyRequest): Promise<boolean>;
+    isRestricted?(request: FastifyRequest): Promise<boolean>;
 }
 
 interface FastifyJWTSimpleDecorator {
     jwtBannedToken: FlatCache;
     jwtBannedRefresh: FlatCache;
-    isToAuthenticate(request: FastifyRequest): Promise<boolean>;
-    pathToken: string;
-    pathRefreshToken: string;
-    pathLogout: string;
-    expirationToken: number;
-    expirationRefreshToken: number;
-    userData<
+    isRestricted(request: FastifyRequest): Promise<boolean>;
+    path: Required<Paths>;
+    expiration: Required<Expirations>;
+    authUser<
         T extends Record<string, string | number | T>,
         J extends Record<string, string | number | J>
     >(
@@ -58,7 +63,10 @@ interface FastifyJWTSimpleOptions
 
 interface FastifyJWTSimpleOptionsPostDefaults
     extends FastifyJWTOptions,
-        Required<FastifyJWTSimpleInternalOptions> {}
+        Required<FastifyJWTSimpleInternalOptions> {
+    path: Required<Paths>;
+    expiration: Required<Expirations>;
+}
 
 type FastifyJWTSimple = FastifyPluginAsync<FastifyJWTSimpleOptions>;
 

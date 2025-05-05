@@ -7,7 +7,7 @@ const userBody = 'test';
 const passBody = 'test';
 const ret = { id: '123' };
 
-const userData = async <T, J>(request: FastifyRequest<{ Body: J }>) => {
+const authUser = async <T, J>(request: FastifyRequest<{ Body: J }>) => {
     const { user, pass } = request.body as {
         user: string;
         pass: string;
@@ -25,7 +25,7 @@ const app = Fastify();
 t.before(async () => {
     await app.register(plugin, {
         secret: 'mysecret',
-        userData
+        authUser
     });
 
     // add a route to test
@@ -50,7 +50,7 @@ t.test('Logout without login', async () => {
 
 t.test('Login and logout and try to access end point', async () => {
     const res = await app.inject({
-        url: app.fjs.pathToken,
+        url: app.fjs.path.token,
         method: 'POST',
         payload: {
             user: userBody,
@@ -62,7 +62,7 @@ t.test('Login and logout and try to access end point', async () => {
     const { token } = JSON.parse(res.payload);
 
     const resLogout = await app.inject({
-        url: app.fjs.pathLogout,
+        url: app.fjs.path.logout,
         method: 'GET',
         headers: {
             authorization: `Bearer ${token}`

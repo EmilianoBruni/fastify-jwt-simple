@@ -9,7 +9,7 @@ const userBody = 'test';
 const passBody = 'test';
 const ret = { id: '123' };
 
-const userData = async <T, J>(request: FastifyRequest<{ Body: J }>) => {
+const authUser = async <T, J>(request: FastifyRequest<{ Body: J }>) => {
     const { user, pass } = request.body as {
         user: string;
         pass: string;
@@ -25,9 +25,11 @@ t.test('Run fastify in random port with small expiration', async t => {
     const app = Fastify();
     await app.register(plugin, {
         secret: 'mysecret',
-        userData,
-        expirationToken: 12, // axios-jwt-simple consider invalid token if expiration is less than 10
-        expirationRefreshToken: 14
+        authUser,
+        expiration: {
+            token: 12, // axios-jwt-simple consider invalid token if expiration is less than 10
+            refreshToken: 14
+        }
     });
 
     // add a route to test
