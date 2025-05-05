@@ -9,7 +9,7 @@ type ExtractBody<T> = T extends FastifyRequest<{ Body: infer J }> ? J : never;
 
 // Example usage
 export type UserDataBody = ExtractBody<
-    Parameters<FastifyJWTSimpleDecorator['userData']>[0]
+    Parameters<FastifyJWTSimpleDecorator['authUser']>[0]
 >;
 
 export default {
