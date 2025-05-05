@@ -25,11 +25,11 @@ const addDefaultOptions = (
     options: FastifyJWTSimpleOptions
 ): FastifyJWTSimpleOptionsPostDefaults => {
     // add default options
-    options.path = options.path || {};
+    options.path = options.path || { refreshToken: '', token: '', logout: '' };
     options.path.token = options.path.token || '/auth/token';
     options.path.refreshToken = options.path.refreshToken || '/auth/refresh';
     options.path.logout = options.path.logout || '/auth/logout';
-    options.expiration = options.expiration || {};
+    options.expiration = options.expiration || { token: 0, refreshToken: 0 };
     options.expiration.token = options.expiration.token || 60 * 20; // 20 minutes
     options.expiration.refreshToken =
         options.expiration.refreshToken || 60 * 60 * 24 * 7; // 7 days
@@ -137,7 +137,14 @@ const jwtBannedRefresh = (options: FastifyJWTSimpleOptionsPostDefaults) =>
         expirationInterval: 10 * ONE_MINUTE_IN_MS // 10 minute
     });
 
-// Set cookie with secure, httpOnly, sameSite, signed and expires
+/**
+ * Sets a secure cookie in the response.
+ * @param cookieName - The name of the cookie.
+ * @param cookieValue - The value of the cookie.
+ * @param expires - The expiration date of the cookie.
+ * @param path - Optional path for the cookie. Defaults to '/' if not provided.
+ * @returns The FastifyReply instance for chaining.
+ */
 function setSCookie(
     this: FastifyReply,
     cookieName: string,
