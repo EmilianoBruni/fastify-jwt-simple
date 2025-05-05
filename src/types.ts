@@ -27,6 +27,8 @@ type Expirations = {
     refreshToken: number;
 };
 
+type AuthUserNestedOption<T> = Record<string, string | number | T>;
+
 interface FastifyJWTSimpleInternalOptions {
     cookieConfig: {
         name: string;
@@ -35,8 +37,8 @@ interface FastifyJWTSimpleInternalOptions {
     path: Paths;
     expiration: Expirations;
     authUser<
-        T extends Record<string, string | number | T>,
-        J extends Record<string, string | number | J>
+        T extends AuthUserNestedOption<T>,
+        J extends AuthUserNestedOption<J>
     >(
         request: FastifyRequest<{ Body: J }>
     ): Promise<T>;
