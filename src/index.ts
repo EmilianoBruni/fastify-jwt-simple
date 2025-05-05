@@ -1,10 +1,10 @@
-import {
+import type {
     FastifyJWTSimpleOptions,
     FastifyJWTSimple,
     FastifyJWTSimpleOptionsPostDefaults,
     FastifyJWTSimpleDecorator
 } from '@/types.js';
-import { FastifyInstance, FastifyReply } from 'fastify';
+import type { FastifyInstance, FastifyReply } from 'fastify';
 import type { FastifyJWTOptions } from '@fastify/jwt';
 import fastifyJwt from '@fastify/jwt';
 import { FlatCache, FlatCacheEvents } from 'flat-cache';
@@ -40,7 +40,7 @@ const addDefaultOptions = (
     return options as FastifyJWTSimpleOptionsPostDefaults;
 };
 
-const plugin = async (
+const plugin: FastifyJWTSimple = async (
     app: FastifyInstance,
     options: FastifyJWTSimpleOptions
 ) => {
@@ -163,4 +163,4 @@ export default fp(plugin, {
     fastify: '5.x'
 });
 
-export type { FastifyJWTSimpleOptions, FastifyJWTSimple };
+export type { FastifyJWTSimpleOptions };
