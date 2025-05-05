@@ -17,56 +17,46 @@ declare module 'fastify' {
 }
 
 type Paths = {
-    token?: string;
-    refreshToken?: string;
-    logout?: string;
+    token: string;
+    refreshToken: string;
+    logout: string;
 };
 
 type Expirations = {
-    token?: number;
-    refreshToken?: number;
+    token: number;
+    refreshToken: number;
 };
 
 interface FastifyJWTSimpleInternalOptions {
-    cookieConfig?: {
+    cookieConfig: {
         name: string;
         domain?: string;
     };
-    path?: Paths;
-    expiration?: Expirations;
-    authUser?<
-        T extends Record<string, string | number | T>,
-        J extends Record<string, string | number | J>
-    >(
-        request: FastifyRequest<{ Body: J }>
-    ): Promise<T>;
-    isRestricted?(request: FastifyRequest): Promise<boolean>;
-}
-
-interface FastifyJWTSimpleDecorator {
-    jwtBannedToken: FlatCache;
-    jwtBannedRefresh: FlatCache;
-    isRestricted(request: FastifyRequest): Promise<boolean>;
-    path: Required<Paths>;
-    expiration: Required<Expirations>;
+    path: Paths;
+    expiration: Expirations;
     authUser<
         T extends Record<string, string | number | T>,
         J extends Record<string, string | number | J>
     >(
         request: FastifyRequest<{ Body: J }>
     ): Promise<T>;
+    isRestricted(request: FastifyRequest): Promise<boolean>;
 }
 
-interface FastifyJWTSimpleOptions
-    extends FastifyJWTOptions,
-        FastifyJWTSimpleInternalOptions {}
+type FastifyJWTSimpleDecorator = {
+    jwtBannedToken: FlatCache;
+    jwtBannedRefresh: FlatCache;
+} & Omit<FastifyJWTSimpleInternalOptions, 'cookieConfig'>;
+
+type FastifyJWTSimpleOptions = FastifyJWTOptions &
+    Partial<FastifyJWTSimpleInternalOptions> & {
+        path?: Partial<Paths>;
+        expiration?: Partial<Expirations>;
+    };
 
 interface FastifyJWTSimpleOptionsPostDefaults
     extends FastifyJWTOptions,
-        Required<FastifyJWTSimpleInternalOptions> {
-    path: Required<Paths>;
-    expiration: Required<Expirations>;
-}
+        FastifyJWTSimpleInternalOptions {}
 
 type FastifyJWTSimple = FastifyPluginAsync<FastifyJWTSimpleOptions>;
 
