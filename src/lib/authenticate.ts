@@ -9,6 +9,8 @@ export default async (
 ): Promise<FastifyError | undefined> => {
     // no authentication for login page
     if (req.url === req.server.fjs.path.token) return;
+    // no authentication for refresh token page
+    if (req.url === req.server.fjs.path.refreshToken) return;
 
     // if url it's not to authenticate, bypass authentication
     if (!(await req.server.fjs.isRestricted(req))) return;
