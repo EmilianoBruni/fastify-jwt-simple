@@ -103,7 +103,7 @@ The plugin accepts following options:
 - **`path`**: Customizable paths for token, refresh, and logout routes.
 - **`expiration`**: Token expiration times (in seconds).
 - **`cookieConfig`**: Configuration for secure cookies.
-- **`isRestricted`**: A function to filter which endpoints are protected or not (by default, all endproints are protected excluding the login page `path.token`)
+- **`isRestricted`**: A function to filter which endpoints are protected or not (by default, all endproints are protected excluding the login page `path.token` and refresh page `path.refreshToken`)
 
 #### Default Configuration
 
