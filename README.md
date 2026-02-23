@@ -143,6 +143,10 @@ Avoid to manually register these plugins.
 `fastify-jwt-simple` automatically load `@fastify/sensible`. To avoid conflict remove manual registration of this plugin or 
 being sure that `fastify-jwt-simple` was called after `@fastify/sensible` using `app.register` dependencies.
 
+### Auth routes are not visible in swagger
+
+Be sure to register this plugin after `@fastify/swagger` and `@fastify/swagger-ui`. Use `app.register` dependencies to set correct plugins load sequence.
+
 ## TypeScript Support
 
 `fastify-jwt-simple` is written in Typescript and so is fully typed and works seamlessly with TypeScript. 
