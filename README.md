@@ -136,6 +136,13 @@ This plugin automatically loads these other plugins
 
 Avoid to manually register these plugins.
 
+## FAQ
+
+### The decorator 'httpErrors' has already been added!
+
+`fastify-jwt-simple` automatically load `@fastify/sensible`. To avoid conflict remove manual registration of this plugin or 
+being sure that `fastify-jwt-simple` was called after `@fastify/sensible` using `app.register` dependencies.
+
 ## TypeScript Support
 
 `fastify-jwt-simple` is written in Typescript and so is fully typed and works seamlessly with TypeScript. 
