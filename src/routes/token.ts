@@ -1,11 +1,9 @@
 import { FastifyReply, FastifyInstance } from 'fastify';
+import { FastifyError } from '@fastify/error';
 import schema from '@/schema/token.schema.js';
 import { FastifyJWTSimpleDecorator } from '@/types.js';
 
-import {
-    FST_INVALID_CREDENTIALS,
-    FST_USER_DATA_NOT_IMPLEMENTED
-} from '@/lib/errors.js';
+import { FST_INVALID_CREDENTIALS } from '@/lib/errors.js';
 
 type FastifyRequestWithBody = Parameters<
     FastifyJWTSimpleDecorator['authUser']
@@ -22,12 +20,12 @@ const h = async (req: FastifyRequestWithBody, rep: FastifyReply) => {
     try {
         userData = await req.server.fjs.authUser(req);
     } catch (error) {
-        if (error instanceof FST_USER_DATA_NOT_IMPLEMENTED) {
+        // if error is type @fastify/error, return it
+        if (error instanceof FastifyError) {
             return error;
+        } else {
+            return new FST_INVALID_CREDENTIALS();
         }
-
-        // TODO: customize with raised error
-        return new FST_INVALID_CREDENTIALS();
     }
 
     if (!userData) {

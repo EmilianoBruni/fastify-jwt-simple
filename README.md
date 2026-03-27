@@ -1,4 +1,4 @@
-# fastify-jwt-simple - A simple JWT manager 
+# fastify-jwt-simple - A simple JWT manager
 
 _A simple JWT manager with automatic access and refresh token support (over cookies too)_
 
@@ -39,7 +39,7 @@ const app = Fastify();
 
 await app.register(plugin, {
     secret: 'your-secret-key',
-    authUser: async (request) => {
+    authUser: async request => {
         const { user, pass } = request.body;
         if (user === 'test' && pass === 'test') {
             return { id: '123' }; // Return user data
@@ -69,7 +69,7 @@ const app = Fastify();
 
 await app.register(plugin, {
     secret: 'mysecret',
-    authUser: async (request) => {
+    authUser: async request => {
         const { user, pass } = request.body;
         if (user === 'test' && pass === 'test') {
             return { id: '123' };
@@ -83,6 +83,77 @@ app.get('/', async () => {
 });
 
 await app.listen({ port: 3000 });
+```
+
+### Authentication Error Handling
+
+The `authUser` function controls what the client receives when login fails. The plugin handles three outcomes:
+
+| `authUser` result         | Client response                                                 |
+| ------------------------- | --------------------------------------------------------------- |
+| Returns user data object  | `200 OK` with `token` and `refreshToken`                        |
+| Returns `undefined`       | `401 Unauthorized` (generic invalid credentials)                |
+| Throws a `@fastify/error` | The error's status code and message are forwarded to the client |
+| Throws any other error    | `401 Unauthorized` (generic invalid credentials)                |
+
+Throwing a `@fastify/error` is the recommended way to communicate specific login failures (e.g. account disabled, subscription expired) with a meaningful HTTP status code and error code.
+
+#### Example with `@fastify/error`
+
+```ts
+import createError from '@fastify/error';
+
+const ERR_ACCOUNT_DISABLED = createError(
+    'APP_ACCOUNT_DISABLED',
+    'Account is disabled',
+    403
+);
+const ERR_MISSING_CREDENTIALS = createError(
+    'APP_MISSING_CREDENTIALS',
+    'Username and password are required',
+    400
+);
+
+await app.register(plugin, {
+    secret: 'mysecret',
+    authUser: async request => {
+        const { username, password } = request.body;
+
+        if (!username || !password) throw new ERR_MISSING_CREDENTIALS();
+
+        const user = await db.findUser(username);
+        if (!user) return undefined; // → 401 generic error
+
+        if (!user.enabled) throw new ERR_ACCOUNT_DISABLED(); // → 403 with code APP_ACCOUNT_DISABLED
+
+        const valid = await bcrypt.compare(password, user.passwordHash);
+        if (!valid) return undefined; // → 401 generic error
+
+        return { id: user.id, role: user.role };
+    }
+});
+```
+
+The client receives a structured JSON error response for thrown `@fastify/error` instances:
+
+```json
+{
+    "statusCode": 403,
+    "code": "APP_ACCOUNT_DISABLED",
+    "error": "Forbidden",
+    "message": "Account is disabled"
+}
+```
+
+For `undefined` returns or non-`@fastify/error` throws, the client always gets:
+
+```json
+{
+    "statusCode": 401,
+    "code": "FST_INVALID_CREDENTIALS",
+    "error": "Unauthorized",
+    "message": "Invalid credentials"
+}
 ```
 
 ### Testing
@@ -130,9 +201,9 @@ This plugin extends `@fastify/jwt` so all other configurations will be passed to
 
 This plugin automatically loads these other plugins
 
-* `@fastify/jwt`
-* `@fastify/cookie`
-* `@fastify/sensible`
+- `@fastify/jwt`
+- `@fastify/cookie`
+- `@fastify/sensible`
 
 Avoid to manually register these plugins.
 
@@ -140,7 +211,7 @@ Avoid to manually register these plugins.
 
 ### The decorator 'httpErrors' has already been added!
 
-`fastify-jwt-simple` automatically load `@fastify/sensible`. To avoid conflict remove manual registration of this plugin or 
+`fastify-jwt-simple` automatically load `@fastify/sensible`. To avoid conflict remove manual registration of this plugin or
 being sure that `fastify-jwt-simple` was called after `@fastify/sensible` using `app.register` dependencies.
 
 ### Auth routes are not visible in swagger
@@ -149,7 +220,7 @@ Be sure to register this plugin after `@fastify/swagger` and `@fastify/swagger-u
 
 ## TypeScript Support
 
-`fastify-jwt-simple` is written in Typescript and so is fully typed and works seamlessly with TypeScript. 
+`fastify-jwt-simple` is written in Typescript and so is fully typed and works seamlessly with TypeScript.
 
 ## Links
 
@@ -160,7 +231,7 @@ Be sure to register this plugin after `@fastify/swagger` and `@fastify/swagger-u
 
 ## Contributing
 
-We welcome contributions! 
+We welcome contributions!
 
 ## Author
 
