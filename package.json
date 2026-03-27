@@ -1,6 +1,6 @@
 {
     "name": "fastify-jwt-simple",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": "A simple JWT manager with automatic access and refresh token support (over cookies too)",
     "main": "dist/index.js",
     "scripts": {
