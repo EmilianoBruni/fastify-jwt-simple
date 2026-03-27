@@ -44,7 +44,7 @@ await app.register(plugin, {
         if (user === 'test' && pass === 'test') {
             return { id: '123' }; // Return user data
         }
-        throw new Error('Invalid credentials');
+        return undefined;
     }
 });
 ```
